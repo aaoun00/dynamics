@@ -4,3 +4,5 @@ venv/
 data/
 model_data/
 model_output/
+rnn_data
+rnn/rnn_data/

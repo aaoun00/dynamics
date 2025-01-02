@@ -224,7 +224,6 @@ def get_raster_aligned_covariates(FIRA, alignto, trials=None, lowcut=None, highc
 
     return time_ramps, choice_pulse
 
-
 def organize_raster_by_condition(raster, ramps, choice_pulse, coh, trials_cor, coh_set=None, window_size=1):
     """
     Organizes data for saving into 3 groups: Tin, Tout, Tall (= Tin + Tout).

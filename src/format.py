@@ -378,3 +378,4 @@ def organize_raster_by_condition(raster, ramps, choice_pulse, coh, trials_cor, c
                
     return by_cond, by_cond_t1, by_cond_t2
         
+        

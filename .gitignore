@@ -6,3 +6,5 @@ model_data/
 model_output/
 rnn_data
 rnn/rnn_data/
+.DS_Store
+dump.txt

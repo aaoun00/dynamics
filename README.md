@@ -5,7 +5,7 @@ Change repo name asap
 
 ## explore.ipynb
 
-Exploratory analysis of the data. So far this notebooks:
+Exploratory analysis of the data. So far this notebook:
 
     - Extracts specific time points (e.g. dot onset, saccade, etc.)
     - Plots and computes median reaction time
@@ -32,6 +32,9 @@ Exploratory analysis of the data. So far this notebooks:
         - Window 2: Tin and Tout trajectories for different coherence levels lie along a roughly straight line? The 
         trajectories for Tin and Tout seem roughly perpendicular/lie in opposite directions
         - Window 3: pending
+
+    - Missing:
+        - Basic stats (nmb trials, distribution across coh levels, etc...)
 
 ## rnn_gplds_pca_fit.ipynb
 

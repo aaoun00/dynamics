@@ -5,7 +5,7 @@ from src.format import organize_raster_by_condition
 
 if __name__ == "__main__":
     folder_path = 'data/prearcuate_gyrus'
-    model_output_path = 'model_output'
+    model_output_path = 'model_data'
     
     if not os.path.exists(model_output_path):
         os.mkdir(model_output_path)
@@ -39,29 +39,39 @@ if __name__ == "__main__":
             #     # # {'event': 'targ_on', 'start_offset': -300, 'end_offset': 9999, 'limits': [['in_fp_wd', 0], ['feedback', 500]]}
             # ]
 
-            # full_align_struct = [
-            #     # {'event': 'dots_on_screen', 'start_offset': -300, 'end_offset': 1000, 'limits': [['dots_on_screen', 150], ['out_fp_wd', -50]]},
-            #     {'event': 'dots_on_screen', 'start_offset': +150, 'end_offset': 1000, 'limits': [['dots_on_screen', 150], ['out_fp_wd', -50]]},
-            #     # {'event': 'dots_on_screen', 'start_offset': -200, 'end_offset': 100, 'limits': [[None, None], [None, None]]},
-            #     # {'event': 'dots_on_screen', 'start_offset': +150, 'end_offset': 1000, 'limits': [['targ_on', 0], ['out_fp_wd', -50]]},
-            # ]
-
+            median_rt = 746
             full_align_struct = [
-                # {'event': 'dots_on_screen', 'start_offset': 0, 'end_offset': 1000, 'limits': [['dots_on_screen', +150], ['out_fp_wd', -50]]},
-                {'event': 'dots_on_screen', 'start_offset': 150, 'end_offset': 1000, 'limits': [['dots_on_screen', 150], ['out_fp_wd', -50]]},
-                # {'event': 'dots_on_screen', 'start_offset': 250, 'end_offset': 600, 'limits': [['dots_on_screen', 250], ['out_fp_wd', -50]]},
+                # {'event': 'dots_on_screen', 'start_offset': 150, 'end_offset': median_rt, 'limits': [['targ_on', 0], ['out_fp_wd', -50]]},
+                # {'event': 'dots_on_screen', 'start_offset': median_rt-150, 'end_offset': median_rt-50, 'limits': [['targ_on', 0], ['out_fp_wd', -50]]},
+                # {'event': 'out_fp_wd', 'start_offset': -median_rt-150, 'end_offset': -50, 'limits': [['dots_on_screen', 150], ['feedback', 0]]},
+                {'event': 'dots_on_screen', 'start_offset': 150, 'end_offset': median_rt, 'limits': [['targ_on', 0], [None, None]]},
+                {'event': 'dots_on_screen', 'start_offset': median_rt-150, 'end_offset': median_rt-50, 'limits': [['targ_on', 0], [None, None]]},
             ]
 
+
+            # # full_align_struct = [
+            # #     # {'event': 'dots_on_screen', 'start_offset': -300, 'end_offset': 1000, 'limits': [['dots_on_screen', 150], ['out_fp_wd', -50]]},
+            # #     {'event': 'dots_on_screen', 'start_offset': +150, 'end_offset': 1000, 'limits': [['dots_on_screen', 150], ['out_fp_wd', -50]]},
+            # #     # {'event': 'dots_on_screen', 'start_offset': -200, 'end_offset': 100, 'limits': [[None, None], [None, None]]},
+            # #     # {'event': 'dots_on_screen', 'start_offset': +150, 'end_offset': 1000, 'limits': [['targ_on', 0], ['out_fp_wd', -50]]},
+            # # ]
+
             # full_align_struct = [
-            #     {'event': 'dots_on_screen', 'start_offset': +150, 'end_offset': 1000, 'limits': [[None, None], [None, None]]},
+            #     # {'event': 'dots_on_screen', 'start_offset': 0, 'end_offset': 1000, 'limits': [['dots_on_screen', +150], ['out_fp_wd', -50]]},
+            #     {'event': 'dots_on_screen', 'start_offset': 150, 'end_offset': 1000, 'limits': [['dots_on_screen', 150], ['out_fp_wd', -50]]},
+            #     # {'event': 'dots_on_screen', 'start_offset': 250, 'end_offset': 600, 'limits': [['dots_on_screen', 250], ['out_fp_wd', -50]]},
             # ]
+
+            # # full_align_struct = [
+            # #     {'event': 'dots_on_screen', 'start_offset': +150, 'end_offset': 1000, 'limits': [[None, None], [None, None]]},
+            # # ]
 
             window_size = 1 # ms
                                 
-            raster, ramps, choice_pulse, alignto, unit_id, coh, trials_cor, coh_group, coh_set = load_fira_mat_file(fpath, full_align_struct)
+            raster, ramps, choice_pulse, alignto, unit_id, coh, trials_cor, coh_group, coh_set, event_dict = load_fira_mat_file(fpath, full_align_struct)
 
-            coh_dims = len(coh_group)
-
+            # coh_dims = len(coh_group)
+            coh_dims = ''
             by_cond, by_cond_t1, by_cond_t2 = organize_raster_by_condition(raster, ramps, choice_pulse, coh, trials_cor, coh_set=None, window_size=window_size)
 
             raster_by_cond = by_cond['raster_by_cond']
@@ -83,8 +93,8 @@ if __name__ == "__main__":
             epoch1_t1_call = raster_by_cond_t1[0]
             epoch1_t2_call = raster_by_cond_t2[0]
             
-            # epoch2_t1_call = raster_by_cond_t1[1]
-            # epoch2_t2_call = raster_by_cond_t2[1]
+            epoch2_t1_call = raster_by_cond_t1[1]
+            epoch2_t2_call = raster_by_cond_t2[1]
 
             # epoch3_t1_call = raster_by_cond_t1[2]
             # epoch3_t2_call = raster_by_cond_t2[2]
@@ -96,23 +106,23 @@ if __name__ == "__main__":
             # fullepoch_t2_call = raster_by_cond_t2[4]
 
             epoch1_call = raster_by_cond[0]
-            # epoch2_call = raster_by_cond[1]
+            epoch2_call = raster_by_cond[1]
             # epoch3_call = raster_by_cond[2]
             # epoch4_call = raster_by_cond[3]
             # fullepoch_call = raster_by_cond[4]
 
             to_save_emission_names = ['epoch1_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             'epoch1_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
-                            # 'epoch2_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
-                            # 'epoch2_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
+                            'epoch2_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
+                            'epoch2_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             # 'epoch3_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             # 'epoch3_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             # 'epoch4_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             # 'epoch4_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             # 'fullepoch_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             # 'fullepoch_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
-                            'epoch1_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy'] # ,
-                            # 'epoch2_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
+                            'epoch1_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
+                            'epoch2_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',]
                             # 'epoch3_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             # 'epoch4_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy',
                             # 'fullepoch_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy'],
@@ -123,10 +133,11 @@ if __name__ == "__main__":
                             # # 'fullepoch_Tall_Coh' + str(coh_dims) + '_' + str(window_size) + '_Y.npy']
             
             to_save_emissions = [epoch1_t1_call, epoch1_t2_call, 
-                                #  epoch2_t1_call, epoch2_t2_call, epoch3_t1_call, epoch3_t2_call, 
+                                 epoch2_t1_call, epoch2_t2_call,
+                                  # epoch3_t1_call, epoch3_t2_call, 
             #                 epoch4_t1_call, epoch4_t2_call, fullepoch_t1_call, fullepoch_t2_call,
-                            epoch1_call] # , 
-                            # # epoch2_call, epoch3_call, epoch4_call, fullepoch_call,
+                            epoch1_call, epoch2_call] 
+                            # # epoch3_call, epoch4_call, fullepoch_call,
                             # epoch1_tall_call]
                             # # epoch2_tall_call, epoch3_tall_call, epoch4_tall_call, fullepoch_tall_call]
             
@@ -141,8 +152,8 @@ if __name__ == "__main__":
             epoch1_t1_call = inputs_by_cond_t1[0]
             epoch1_t2_call = inputs_by_cond_t2[0]
 
-            # epoch2_t1_call = inputs_by_cond_t1[1]
-            # epoch2_t2_call = inputs_by_cond_t2[1]
+            epoch2_t1_call = inputs_by_cond_t1[1]
+            epoch2_t2_call = inputs_by_cond_t2[1]
 
             # epoch3_t1_call = inputs_by_cond_t1[2]
             # epoch3_t2_call = inputs_by_cond_t2[2]
@@ -154,23 +165,23 @@ if __name__ == "__main__":
             # fullepoch_t2_call = inputs_by_cond_t2[4]
 
             epoch1_call = inputs_by_cond[0]
-            # epoch2_call = inputs_by_cond[1]
+            epoch2_call = inputs_by_cond[1]
             # epoch3_call = inputs_by_cond[2]
             # epoch4_call = inputs_by_cond[3]
             # fullepoch_call = inputs_by_cond[4]
 
             to_save_input_names = ['epoch1_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             'epoch1_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
-                            # 'epoch2_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
-                            # 'epoch2_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
+                            'epoch2_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
+                            'epoch2_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             # 'epoch3_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             # 'epoch3_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             # 'epoch4_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             # 'epoch4_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             # 'fullepoch_Tin_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             # 'fullepoch_Tout_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
-                            'epoch1_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy'] # ,
-                            # 'epoch2_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
+                            'epoch1_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
+                            'epoch2_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy']
                             # 'epoch3_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             # 'epoch4_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
                             # 'fullepoch_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy',
@@ -181,10 +192,10 @@ if __name__ == "__main__":
                             # # 'fullepoch_Tall_Coh' + str(coh_dims) + '_' + str(window_size) + '_U.npy']
                         
             to_save_inputs = [epoch1_t1_call, epoch1_t2_call, 
-                            #   epoch2_t1_call, epoch2_t2_call, epoch3_t1_call, epoch3_t2_call, 
+                              epoch2_t1_call, epoch2_t2_call, # epoch3_t1_call, epoch3_t2_call, 
                             # epoch4_t1_call, epoch4_t2_call, fullepoch_t1_call, fullepoch_t2_call,
-                            epoch1_call] # , 
-                            # # epoch2_call, epoch3_call, epoch4_call, fullepoch_call,
+                            epoch1_call, epoch2_call] 
+                            # # epoch3_call, epoch4_call, fullepoch_call,
                             # epoch1_tall_call]
                             # # epoch2_tall_call, epoch3_tall_call, epoch4_tall_call, fullepoch_tall_call]
 
@@ -205,5 +216,10 @@ if __name__ == "__main__":
             print(f'Saved epoch1_choice to {animal_inputs_save_path}')
 
             # save coh_set
-            np.save(os.path.join(animal_inputs_save_path, 'coh_set_' + str(window_size) + '.npy'), coh_set)
+            np.save(os.path.join(animal_inputs_save_path, 'coh_set.npy'), coh_set)
             print(f'Saved coh_set to {animal_inputs_save_path}')
+
+            # save every event in event_dict
+            for key in event_dict.keys():
+                np.save(os.path.join(animal_inputs_save_path, key + '.npy'), event_dict[key])
+                print(f'Saved {key} to {animal_inputs_save_path}')

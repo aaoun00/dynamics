@@ -16,9 +16,13 @@ def format_event(event):
     Formats an event to a float
     """
     for i in range(len(event)):
-        if event[i].shape[1] == 0:
-            event[i] = float('nan')
+        if type(event[i]) == np.ndarray: # [[x]]
+            if event[i].shape[1] == 0:
+                event[i] = float('nan')
+            else:
+                event[i] = float(event[i][0][0])
         else:
-            event[i] = float(event[i][0][0])
+            assert type(event[i]) == float # dots_on_screen
+            event[i] = float(event[i])
     return np.array(event, dtype=float)
 

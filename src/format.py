@@ -101,7 +101,7 @@ def get_raster_array(FIRA, alignto, trials=None, lowcut=None, highcut=None):
                 continue
             
             """ To not pad with nans add the commented out code below """
-            if int(end_times[i]) + 1 < int(begin_times[i]): # or int(end_times_cap[i]) + 1 < int(begin_times[i]):
+            if int(end_times[i]) + 1 <= int(begin_times[i]): # or int(end_times_cap[i]) + 1 < int(begin_times[i]):
                 continue
             else:
                 t = np.arange(int(begin_times[i]), int(end_times[i]) + 1) # different to t_, this is the time bin edges to use for histogram
@@ -165,20 +165,20 @@ def get_raster_aligned_covariates(FIRA, alignto, trials=None, lowcut=None, highc
             lowcut_event = FIRA[0,1][trials[g], lowcut_index]
             lowcut_event = format_event(lowcut_event)
 
-            begin_times_cap = np.maximum(begin_times, lowcut_event + lowcut['offset'])
-            begin_times = begin_times
+            # begin_times_cap = np.maximum(begin_times, lowcut_event + lowcut['offset'])
+            # begin_times = begin_times
 
-            # begin_times = np.maximum(begin_times, lowcut_event + lowcut['offset'])
+            begin_times = np.maximum(begin_times, lowcut_event + lowcut['offset'])
 
         if highcut['event']:
             highcut_index = get_index(highcut['event'], FIRA)
             highcut_event = FIRA[0,1][trials[g], highcut_index]
             highcut_event = format_event(highcut_event)
 
-            end_times_cap = np.minimum(end_times, highcut_event + highcut['offset'])
-            end_times = end_times
+            # end_times_cap = np.minimum(end_times, highcut_event + highcut['offset'])
+            # end_times = end_times
 
-            # end_times = np.minimum(end_times, highcut_event + highcut['offset'])
+            end_times = np.minimum(end_times, highcut_event + highcut['offset'])
 
         raster_len = len(np.arange(int(alignto['start_offset']), int(alignto['end_offset']) + 1))
 
@@ -194,13 +194,16 @@ def get_raster_aligned_covariates(FIRA, alignto, trials=None, lowcut=None, highc
                 end_times[i] == 0):
                 continue
             
-            if int(end_times[i]) + 1 < int(begin_times[i]) or int(end_times_cap[i]) + 1 < int(begin_times[i]):
+            if int(end_times[i]) + 1 <= int(begin_times[i]): # or int(end_times_cap[i]) + 1 <= int(begin_times[i]):
                 continue
             else:
                 """ To not pad with nans need to swap the commented and uncommented code below """
-                ramp_t_ = np.arange(int(begin_times_cap[i]), int(end_times_cap[i]) + 1)
-                ramp_t_ = ramp_t_ - wrt[i] - alignto['start_offset']
-                # ramp_t_ = t_
+                # ramp_t_ = np.arange(int(begin_times_cap[i]), int(end_times_cap[i]) + 1)
+                # ramp_t_ = ramp_t_ - wrt[i] - alignto['start_offset']
+
+                t = np.arange(int(begin_times[i]), int(end_times[i]) + 1) # different to t_, this is the time bin edges to use for histogram
+                t_ = t - wrt[i] - alignto['start_offset'] # drop + 1 that was in matlab code
+                ramp_t_ = t_
                 """ To not pad with nans need to swap the commented and uncommented code above """
 
                 time_ramps[g][i, ramp_t_] = np.linspace(0, 1 - (1 / len(ramp_t_)), len(ramp_t_))
@@ -252,19 +255,19 @@ def organize_raster_by_condition(raster, ramps, choice_pulse, coh, trials_cor, c
 
     # Tin
     raster_by_cond_t1 = np.empty((len(raster), n_units, len(coh_set)), dtype=object)
-    inputs_by_cond_t1 = np.empty((len(raster), n_units, len(coh_set)), dtype=object)
-    trial_ramp_by_cond_t1 = np.empty((len(raster), n_units, len(coh_set)), dtype=object)
-    trial_choice_by_cond_t1 = np.empty((len(raster), n_units, len(coh_set)), dtype=object)
+    inputs_by_cond_t1 = np.empty((len(raster), len(coh_set)), dtype=object)
+    trial_ramp_by_cond_t1 = np.empty((len(raster), len(coh_set)), dtype=object)
+    trial_choice_by_cond_t1 = np.empty((len(raster), len(coh_set)), dtype=object)
 
     # Tout
     raster_by_cond_t2 = np.empty((len(raster), n_units, len(coh_set)), dtype=object)
-    inputs_by_cond_t2 = np.empty((len(raster), n_units, len(coh_set)), dtype=object)
-    trial_ramp_by_cond_t2 = np.empty((len(raster), n_units, len(coh_set)), dtype=object)
-    trial_choice_by_cond_t2 = np.empty((len(raster), n_units, len(coh_set)), dtype=object)
+    inputs_by_cond_t2 = np.empty((len(raster), len(coh_set)), dtype=object)
+    trial_ramp_by_cond_t2 = np.empty((len(raster), len(coh_set)), dtype=object)
+    trial_choice_by_cond_t2 = np.empty((len(raster), len(coh_set)), dtype=object)
 
     for g in range(len(raster)):
 
-        interval_window = raster[g] # has Tin and Tout
+        interval_window = raster[g] 
 
         for c in range(interval_window.shape[0]):
 
@@ -351,31 +354,38 @@ def organize_raster_by_condition(raster, ramps, choice_pulse, coh, trials_cor, c
                         if c == 0:
                             if raster_by_cond_t1[g, u, coh_cond] is None:
                                 raster_by_cond_t1[g, u, coh_cond] = trial_spikes
-                                inputs_by_cond_t1[g, u, coh_cond] = trial_inputs
-                                trial_ramp_by_cond_t1[g, u, coh_cond] = trial_ramp
-                                trial_choice_by_cond_t1[g, u, coh_cond] = trial_choice
+
+                                if u == 0:
+                                    inputs_by_cond_t1[g, coh_cond] = trial_inputs
+                                    trial_ramp_by_cond_t1[g, coh_cond] = trial_ramp
+                                    trial_choice_by_cond_t1[g, coh_cond] = trial_choice
                             else:
                                 raster_by_cond_t1[g, u, coh_cond] = np.vstack((raster_by_cond_t1[g, u, coh_cond], trial_spikes))
-                                inputs_by_cond_t1[g, u, coh_cond] = np.vstack((inputs_by_cond_t1[g, u, coh_cond], trial_inputs))
-                                trial_ramp_by_cond_t1[g, u, coh_cond] = np.vstack((trial_ramp_by_cond_t1[g, u, coh_cond], trial_ramp))
-                                trial_choice_by_cond_t1[g, u, coh_cond] = np.vstack((trial_choice_by_cond_t1[g, u, coh_cond], trial_choice))
+                                
+                                if u == 0:
+                                    inputs_by_cond_t1[g, coh_cond] = np.vstack((inputs_by_cond_t1[g, coh_cond], trial_inputs))
+                                    trial_ramp_by_cond_t1[g, coh_cond] = np.vstack((trial_ramp_by_cond_t1[g, coh_cond], trial_ramp))
+                                    trial_choice_by_cond_t1[g, coh_cond] = np.vstack((trial_choice_by_cond_t1[g, coh_cond], trial_choice))
                         else:
                             assert c == 1, "Condition index should be 0 or 1."
                             if raster_by_cond_t2[g, u, coh_cond] is None:
                                 raster_by_cond_t2[g, u, coh_cond] = trial_spikes
-                                inputs_by_cond_t2[g, u, coh_cond] = trial_inputs
-                                trial_ramp_by_cond_t2[g, u, coh_cond] = trial_ramp
-                                trial_choice_by_cond_t2[g, u, coh_cond] = trial_choice
+
+                                if u == 0:
+                                    inputs_by_cond_t2[g, coh_cond] = trial_inputs
+                                    trial_ramp_by_cond_t2[g, coh_cond] = trial_ramp
+                                    trial_choice_by_cond_t2[g, coh_cond] = trial_choice
                             else:
                                 raster_by_cond_t2[g, u, coh_cond] = np.vstack((raster_by_cond_t2[g, u, coh_cond], trial_spikes))
-                                inputs_by_cond_t2[g, u, coh_cond] = np.vstack((inputs_by_cond_t2[g, u, coh_cond], trial_inputs))
-                                trial_ramp_by_cond_t2[g, u, coh_cond] = np.vstack((trial_ramp_by_cond_t2[g, u, coh_cond], trial_ramp))
-                                trial_choice_by_cond_t2[g, u, coh_cond] = np.vstack((trial_choice_by_cond_t2[g, u, coh_cond], trial_choice))
+                                
+                                if u == 0:
+                                    inputs_by_cond_t2[g, coh_cond] = np.vstack((inputs_by_cond_t2[g, coh_cond], trial_inputs))
+                                    trial_ramp_by_cond_t2[g, coh_cond] = np.vstack((trial_ramp_by_cond_t2[g, coh_cond], trial_ramp))
+                                    trial_choice_by_cond_t2[g, coh_cond] = np.vstack((trial_choice_by_cond_t2[g, coh_cond], trial_choice))
 
     by_cond = {'raster_by_cond': raster_by_cond, 'inputs_by_cond': inputs_by_cond, 'trial_ramp_by_cond': trial_ramp_by_cond, 'trial_choice_by_cond': trial_choice_by_cond}
     by_cond_t1 = {'raster_by_cond_t1': raster_by_cond_t1, 'inputs_by_cond_t1': inputs_by_cond_t1, 'trial_ramp_by_cond_t1': trial_ramp_by_cond_t1, 'trial_choice_by_cond_t1': trial_choice_by_cond_t1}
     by_cond_t2 = {'raster_by_cond_t2': raster_by_cond_t2, 'inputs_by_cond_t2': inputs_by_cond_t2, 'trial_ramp_by_cond_t2': trial_ramp_by_cond_t2, 'trial_choice_by_cond_t2': trial_choice_by_cond_t2}
                
     return by_cond, by_cond_t1, by_cond_t2
-        
         

@@ -33,4 +33,3 @@ def window_raster(raster, window=60):
         n_windows = int(n_windows)
     windowed_raster = raster[:, :n_windows * window].reshape(n_trials, n_windows, window)
     return windowed_raster.squeeze()
-

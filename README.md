@@ -5,7 +5,7 @@ Change repo name asap
 
 ## explore.ipynb
 
-Exploratory analysis of the data. So far this notebook:
+    Exploratory analysis of the data. So far this notebook:
 
     - Extracts specific time points (e.g. dot onset, saccade, etc.)
     - Plots and computes median reaction time
@@ -38,17 +38,17 @@ Exploratory analysis of the data. So far this notebook:
 
 ## rnn_gplds_pca_fit.ipynb
 
-This notebook uses the outputs of the RNN model implemented in the Bredenberg et al. paper (hidden units, figure 1), fits a PCA
-and generates single trial projections. These are then passed into the GPLDS model and extracted as latent states + fixed points
-which are compared to PCA. Current version in demo_fits is all trials (correct/incorrect and Tin/Tout). 
+    This notebook uses the outputs of the RNN model implemented in the Bredenberg et al. paper (hidden units, figure 1), fits a PCA
+    and generates single trial projections. These are then passed into the GPLDS model and extracted as latent states + fixed points
+    which are compared to PCA. Current version in demo_fits is all trials (correct/incorrect and Tin/Tout). 
 
-For now GPLDS seems to recover underlying structure (fixed points on straight line and latent trajectories curve around them).
+    For now GPLDS seems to recover underlying structure (fixed points on straight line and latent trajectories curve around them).
 
-Caveats: Fixed points code still needs to change such that we have points per coh + time bin instead of per coh and across all time bins as is currently displayed
+    Caveats: Fixed points code still needs to change such that we have points per coh + time bin instead of per coh and across all time bins as is currently displayed
 
 ## rnn_gplds_fit.ipynb
 
-Similar to above but fit GPLDS directly to hidden units (as opposed to single trial PC projections)
+    Similar to above but fit GPLDS directly to hidden units (as opposed to single trial PC projections)
 
 # SRC and main.py
 

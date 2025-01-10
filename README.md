@@ -49,3 +49,17 @@ Caveats: Fixed points code still needs to change such that we have points per co
 ## rnn_gplds_fit.ipynb
 
 Similar to above but fit GPLDS directly to hidden units (as opposed to single trial PC projections)
+
+# SRC and main.py
+
+    - format.py: functions to get raster (Y) and covariates (U) + organize as needed (Tall, Tin/Tout)
+    - loading.py: loading raw data and event timestamps from FIRA
+    - utils.py: helper functions
+    - stats.py: stat related functions (still need to incorporate notebook_utils.py)
+    
+    - main.py: set the binning window (1ms) and raster alignment window for extraction. Output in model_data/emissions and model_data/inputs with folders for each animal
+
+# RNN
+
+    - rnn_bredenberg.py: rnn implementation that matches Bredenberg et al. paper Figure 1 + saves hidden units in rnn_data
+    to be used in notebooks

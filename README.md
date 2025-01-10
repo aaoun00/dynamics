@@ -34,7 +34,7 @@ Exploratory analysis of the data. So far this notebook:
         - Window 3: pending
 
     - Missing:
-        - Basic stats (nmb trials, distribution across coh levels, etc...)
+        - Basic dataset stats (nmb trials, distribution across coh levels, etc...)
 
 ## rnn_gplds_pca_fit.ipynb
 
